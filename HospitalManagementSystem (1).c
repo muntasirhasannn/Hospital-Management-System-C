@@ -1378,7 +1378,7 @@ void generateBill()
     if (bills[billCount].stayDays > 10)
     {
         bills[billCount].finalBill =
-            bills[billCount].totalBill - (bills[billCount].totalBill * 10.0 / 100.0);
+            bills[billCount].totalBill - (bills[billCount].totalBill * 0.10);
 
         printf("\n10%% Discount Applied!\n");
     }
