@@ -1345,7 +1345,7 @@ void generateBill()
         {
             bills[billCount].patientID = patientID;
             printf("Enter Patient Name: ");
-            scanf(" %[^\n]", bills[billCount].patientName);
+            scanf("%s", bills[billCount].patientName);
         }
         else
         {
