@@ -358,7 +358,7 @@ void savePatients()
         return;
     }
 
-  
+
 
     // Save all active patients
     for (int i = 0; i < patientCount; i++)
@@ -1164,7 +1164,7 @@ void viewAppointments()
 
     int i;
 
-    sortPatientsByName();  
+    sortPatientsByName();
 
     printf("\n");
     printf("=====================================================================\n");
@@ -1659,6 +1659,7 @@ int main()
         }
 
         case 3:
+        {
             int choice;
 
             do
@@ -1714,6 +1715,7 @@ int main()
 
             } while (choice!= 0);
             break;
+        }
 
         case 4:{
             int choice;
