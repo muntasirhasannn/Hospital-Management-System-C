@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-#include <strings.h>
+#include <string.h>
 #include <ctype.h>
 #define MAX_PATIENTS 100
 #define MAX_DOCTORS 50
@@ -83,7 +83,7 @@ void addPatient()
 
     // 2. Enter patient name
     printf("Enter Full Name: ");
-    scanf(" %[^\n]", p.name);
+    scanf("%s", p.name);
 
     // 3. Enter patient age
     printf("Enter Age: ");
@@ -91,19 +91,19 @@ void addPatient()
 
     // 4. Enter patient gender
     printf("Enter Gender: ");
-    scanf(" %[^\n]", p.gender);
+    scanf("%s", p.gender);
 
     // 5. Enter patient phone number
     printf("Enter Phone Number: ");
-    scanf(" %[^\n]", p.phone);
+    scanf("%s", p.phone);
 
     // 6. Enter blood group
     printf("Enter Blood Group: ");
-    scanf(" %[^\n]", p.bloodGroup);
+    scanf("%s", p.bloodGroup);
 
     // 7. Enter address
     printf("Enter Address: ");
-    scanf(" %[^\n]", p.address);
+    scanf("%s", p.address);
 
     // Mark patient as active
     p.isActive = 1;
@@ -157,7 +157,7 @@ void updatePatient()
 
     // 4. Update name
     printf("Enter Name: ");
-    scanf(" %[^\n]", patients[index].name);
+    scanf("%s", patients[index].name);
 
     // 5. Update age
     printf("Enter Age: ");
@@ -165,19 +165,19 @@ void updatePatient()
 
     // 6. Update gender
     printf("Enter Gender: ");
-    scanf(" %[^\n]", patients[index].gender);
+    scanf("%s", patients[index].gender);
 
     // 7. Update phone
     printf("Enter Phone Number: ");
-    scanf(" %[^\n]", patients[index].phone);
+    scanf("%s", patients[index].phone);
 
     // 8. Update blood group
     printf("Enter Blood Group: ");
-    scanf(" %[^\n]", patients[index].bloodGroup);
+    scanf("%s", patients[index].bloodGroup);
 
     // 9. Update address
     printf("Enter Address: ");
-    scanf(" %[^\n]", patients[index].address);
+    scanf("%s", patients[index].address);
 
     // Save updated information
     savePatients();
@@ -323,6 +323,27 @@ void searchPatient()
     printf("Address     : %s\n", patients[index].address);
 }
 
+// Sorting patients by name
+
+  void sortPatientsByName()
+{
+    int i, j;
+    Patient temp;
+
+    for (i = 0; i < patientCount - 1; i++)
+    {
+        for (j = i + 1; j < patientCount; j++)
+        {
+            if (strcmp(patients[i].name, patients[j].name) > 0)
+            {
+                temp = patients[i];
+                patients[i] = patients[j];
+                patients[j] = temp;
+            }
+        }
+    }
+}
+
 // Function to save patients to file
 void savePatients()
 {
@@ -337,13 +358,15 @@ void savePatients()
         return;
     }
 
+
+
     // Save all active patients
     for (int i = 0; i < patientCount; i++)
     {
         if (patients[i].isActive == 1)
         {
             fprintf(file,
-                    "%d|%s|%d|%s|%s|%s|%s\n",
+                    "%d %s %d %s %s %s %s\n",
                     patients[i].id,
                     patients[i].name,
                     patients[i].age,
@@ -375,22 +398,17 @@ void loadPatients()
     patientCount = 0;
 
     // Read patients from file
-    while (patientCount < MAX_PATIENTS &&
-           fscanf(file,
-                  "%d|%49[^|]|%d|%9[^|]|%14[^|]|%5[^|]|%99[^\n]",
-                  &patients[patientCount].id,
-                  patients[patientCount].name,
-                  &patients[patientCount].age,
-                  patients[patientCount].gender,
-                  patients[patientCount].phone,
-                  patients[patientCount].bloodGroup,
-                  patients[patientCount].address) == 7)
-    {
-        patients[patientCount].isActive = 1;
-
-        patientCount++;
-    }
-
+   while (fscanf(file, "%d %s %d %s %s %s %s",
+              &patients[patientCount].id,
+              patients[patientCount].name,
+              &patients[patientCount].age,
+              patients[patientCount].gender,
+              patients[patientCount].phone,
+              patients[patientCount].bloodGroup,
+              patients[patientCount].address) == 7)
+{
+    patientCount++;
+}
     // Close file
     fclose(file);
 }
@@ -823,11 +841,7 @@ void dischargePatient(Bed beds[], int size)
 //=====APPOINTMENT MANAGEMENT=====
 // -------------------- STRUCTURES --------------------
 
-struct Patient
-{
-    int id;
-    char name[50];
-};
+
 
 struct Doctor
 {
@@ -913,13 +927,13 @@ int findPatient(int id)
 {
     int i;
 
-    for (i = 0; i < MAX_PATIENTS; i++)
+    for (i = 0; i < patientCount; i++)
+{
+    if (patients[i].id == id && patients[i].isActive == 1)
     {
-        if (patients[i].id == id)
-        {
-            return i;
-        }
+        return i;
     }
+}
 
     return -1;
 }
@@ -1150,6 +1164,8 @@ void viewAppointments()
 
     int i;
 
+    sortPatientsByName();
+
     printf("\n");
     printf("=====================================================================\n");
     printf("                          VIEW APPOINTMENTS\n");
@@ -1214,7 +1230,7 @@ void viewPatients()
 
     // Load fresh data from file to ensure we have latest patient records
     loadPatients();
-
+    sortPatientsByName();
     if (patientCount == 0)
     {
         printf("No patient records found.\n");
@@ -1349,7 +1365,7 @@ void generateBill()
         {
             bills[billCount].patientID = patientID;
             printf("Enter Patient Name: ");
-            scanf(" %[^\n]", bills[billCount].patientName);
+            scanf("%s", bills[billCount].patientName);
         }
         else
         {
@@ -1382,7 +1398,7 @@ void generateBill()
     if (bills[billCount].stayDays > 10)
     {
         bills[billCount].finalBill =
-            bills[billCount].totalBill - (bills[billCount].totalBill * 10.0 / 100.0);
+            bills[billCount].totalBill - (bills[billCount].totalBill * 0.10);
 
         printf("\n10%% Discount Applied!\n");
     }
@@ -1524,7 +1540,7 @@ int main()
 {
     while (1)
     {
-        int choiceee;
+        int choice;
 
         printf("\n");
         printf("=====================================================================\n");
@@ -1538,9 +1554,9 @@ int main()
         printf("5. Exit\n");
 
         printf("\nEnter your choice: ");
-        scanf("%d", &choiceee);
+        scanf("%d", &choice);
 
-        switch (choiceee)
+        switch (choice)
         {
         case 1:
 
@@ -1643,7 +1659,8 @@ int main()
         }
 
         case 3:
-            int choiceee;
+        {
+            int choice;
 
             do
             {
@@ -1663,9 +1680,9 @@ int main()
                 printf("=====================================================================\n");
 
                 printf("Enter your choice: ");
-                scanf("%d", &choiceee);
+                scanf("%d", &choice);
 
-                switch (choiceee)
+                switch (choice)
                 {
 
                 case 1:
@@ -1690,16 +1707,17 @@ int main()
 
                 case 6:
                     printf("\nReturning to main menu...\n");
-                    goto mainMenu;
+                    break;
 
                 default:
                     printf("\nInvalid choice. Please try again.\n");
                 }
 
-            } while (choiceee != 0);
+            } while (choice!= 0);
             break;
+        }
 
-        case 4:
+        case 4:{
             int choice;
 
             while (1)
@@ -1741,7 +1759,7 @@ int main()
                     printf("\nInvalid Choice!\n");
                 }
             }
-            break;
+            break;}
 
         case 5:
             printf("\nExiting program...\n");
